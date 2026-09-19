@@ -20,9 +20,27 @@ It is **not** a live market-making bot and does not place orders or spend sponso
 - Money/rate arithmetic uses explicit decimal semantics where precision matters.
 - Optimizers respect hard budgets/caps and expose uncertainty.
 
+## Reward rules
+
+The rule registry currently admits two materially different Kalshi public rule families:
+
+- liquidity incentives: quote-size/distance scoring plus period reward share and snapshot coverage;
+- volume incentives: proportional eligible volume with the published per-contract cap.
+
+Each admitted version records an effective interval, source URL, local source-summary snapshot and SHA-256. There is intentionally no mutable `latest` alias.
+
+```bash
+PYTHONPATH=src python -m prediction_liquidity_kit.cli rules list
+PYTHONPATH=src python -m prediction_liquidity_kit.cli rules inspect kalshi-liquidity-help-2026-09-19
+PYTHONPATH=src python -m prediction_liquidity_kit.cli rules evaluate kalshi-volume-help-2026-08-05 \
+  --input-json '{"contract_price":"0.50","user_eligible_contracts":"1000","total_eligible_contracts":"1000","reward_pool":"1000"}'
+```
+
+The pinned summaries under `docs/rule-snapshots/` are provenance fixtures, not substitutes for venue terms. Unsupported exceptions or unknown/missing inputs fail explicitly rather than being imputed.
+
 ## Status
 
-Bootstrap only. Rule registry work: `sangtrx/sang-workspace#739`. MM allocator: `#740`. Sponsor optimizer/controller: `#741/#742`.
+Rule registry/calculator work is tracked in `sangtrx/sang-workspace#739`. MM allocator: `#740`. Sponsor optimizer/controller: `#741/#742`.
 
 ## Verify
 
