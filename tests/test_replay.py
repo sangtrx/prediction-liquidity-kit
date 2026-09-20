@@ -34,6 +34,23 @@ class ReplayFixtureTest(unittest.TestCase):
         with self.assertRaisesRegex(ReplayError, "outside the bound rule-version"):
             ReplayManifest.from_mapping(payload)
 
+    def test_observation_timestamp_must_stay_within_manifest_window(self) -> None:
+        root = FIXTURE.parent
+        manifest = json.loads(FIXTURE.read_text(encoding="utf-8"))
+        observations = json.loads((root / "observations.json").read_text(encoding="utf-8"))
+        observations["observations"][0]["timestamp"] = manifest["window"]["end"]
+
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            broken = target / "observations.json"
+            broken.write_text(json.dumps(observations, sort_keys=True), encoding="utf-8")
+            manifest["files"][0]["sha256"] = hashlib.sha256(broken.read_bytes()).hexdigest()
+            manifest["normalized_fixture_sha256"] = "0" * 64
+            (target / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+            with self.assertRaisesRegex(ReplayError, "outside the replay window"):
+                build_replay(target / "manifest.json")
+
     def test_tagged_fields_require_classification(self) -> None:
         root = FIXTURE.parent
         manifest = json.loads(FIXTURE.read_text(encoding="utf-8"))
