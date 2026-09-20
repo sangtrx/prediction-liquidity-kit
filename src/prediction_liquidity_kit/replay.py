@@ -185,6 +185,29 @@ def _validate_classifications(value: object, path: str = "$") -> None:
         _validate_classifications(item, f"{path}.{key}")
 
 
+def _validate_timestamps(
+    value: object,
+    *,
+    start: datetime,
+    end: datetime,
+    path: str = "$",
+) -> None:
+    if isinstance(value, list):
+        for index, item in enumerate(value):
+            _validate_timestamps(item, start=start, end=end, path=f"{path}[{index}]")
+        return
+    if not isinstance(value, dict):
+        return
+
+    if "timestamp" in value:
+        timestamp = _utc(value["timestamp"], f"{path}.timestamp")  # type: ignore[arg-type]
+        if timestamp < start or timestamp >= end:
+            raise ReplayError(f"{path}.timestamp is outside the replay window")
+
+    for key, item in value.items():
+        _validate_timestamps(item, start=start, end=end, path=f"{path}.{key}")
+
+
 def load_manifest(path: str | Path) -> ReplayManifest:
     manifest_path = Path(path)
     try:
@@ -215,6 +238,12 @@ def build_replay(path: str | Path) -> ReplayBuild:
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:
             raise ReplayError(f"{item.path}: replay input must be UTF-8 JSON") from exc
         _validate_classifications(payload, f"$.files[{item.path}]")
+        _validate_timestamps(
+            payload,
+            start=manifest.window_start,
+            end=manifest.window_end,
+            path=f"$.files[{item.path}]",
+        )
         normalized_files.append({"path": item.path, "sha256": item.sha256, "payload": payload})
 
     normalized: dict[str, object] = {
