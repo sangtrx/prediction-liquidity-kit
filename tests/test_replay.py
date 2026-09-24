@@ -23,6 +23,14 @@ FIXTURE = (
     / "manifest.json"
 )
 
+OBSERVED_FIXTURE = (
+    Path(__file__).resolve().parents[1]
+    / "fixtures"
+    / "replay"
+    / "kalshi-public-trades-kxbtc15m-20260924-v1"
+    / "manifest.json"
+)
+
 
 class ReplayFixtureTest(unittest.TestCase):
     def test_same_manifest_rebuilds_identical_normalized_hash(self) -> None:
@@ -32,6 +40,27 @@ class ReplayFixtureTest(unittest.TestCase):
 
         self.assertEqual(first.sha256, second.sha256)
         self.assertEqual(first.sha256, manifest["normalized_fixture_sha256"])
+
+    def test_observed_public_trade_fixture_is_pinned_and_non_profitability_evidence(self) -> None:
+        first = build_replay(OBSERVED_FIXTURE)
+        second = build_replay(OBSERVED_FIXTURE)
+        manifest = json.loads(OBSERVED_FIXTURE.read_text(encoding="utf-8"))
+        observations = json.loads(
+            (OBSERVED_FIXTURE.parent / "observations.json").read_text(encoding="utf-8")
+        )
+
+        self.assertEqual(first.sha256, second.sha256)
+        self.assertEqual(first.sha256, manifest["normalized_fixture_sha256"])
+        self.assertFalse(manifest["profitability_claim_allowed"])
+        self.assertEqual(len(observations["observations"]), 20)
+        self.assertTrue(
+            all(
+                tagged["classification"] == "observed"
+                for record in observations["observations"]
+                for tagged in record["trade"].values()
+            )
+        )
+        self.assertTrue(any("account ownership" in gap for gap in manifest["gaps"]))
 
     def test_future_rule_version_cannot_leak_backward(self) -> None:
         payload = json.loads(FIXTURE.read_text(encoding="utf-8"))
