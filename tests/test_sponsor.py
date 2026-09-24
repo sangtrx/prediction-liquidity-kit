@@ -129,5 +129,40 @@ class SponsorOptimizerTest(unittest.TestCase):
         self.assertEqual(plan.expected_spend, D("24"))
 
 
+    def test_rate_cap_boundary_is_considered_when_segment_is_feasible(self) -> None:
+        flat_calibration = Calibration(
+            points=(
+                ResponsePoint(D("0"), D("10"), D("200"), D("0.95")),
+                ResponsePoint(D("10"), D("10"), D("200"), D("0.95")),
+            ),
+            sample_size=20,
+            uncertainty_fraction=D("0.10"),
+            evidence_kind="synthetic",
+        )
+        boundary_request = MarketBudgetRequest(
+            market_id="mkt-boundary",
+            target=LiquidityTarget(
+                max_spread_bps=D("12"),
+                min_depth=D("150"),
+                min_quote_uptime=D("0.80"),
+            ),
+            calibration=flat_calibration,
+            current_reward_per_period=D("5"),
+            max_reward_per_period=D("10"),
+            max_rate_change_per_period=D("1"),
+            periods=2,
+        )
+
+        plan = optimize_sponsor_budget([boundary_request], total_budget=D("20"))
+
+        self.assertEqual(plan.status, "ok")
+        self.assertEqual(plan.decisions[0].reward_per_period, D("4"))
+        self.assertEqual(plan.expected_spend, D("8"))
+        self.assertIn(
+            D("4"),
+            [row.reward_per_period for row in plan.decisions[0].sensitivity],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
