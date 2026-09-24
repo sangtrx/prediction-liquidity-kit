@@ -3,15 +3,15 @@
   "files": [
     {
       "path": "observations.json",
-      "sha256": "2c020752e7b96676ddabbe501ba4e036a2c37fbcb0a265966a91ab68afcb4811"
+      "sha256": "f864765dc5d699f422596fdd7942225ad0f78e1165011e2cee8b838b5d9663f2"
     }
   ],
   "gaps": [
-    "No venue fill tape is included; fill rate is estimated.",
-    "Adverse-selection outcome is unknown in this fixture."
+    "No venue fill tape is included; fill rate and realized reward rate are estimated.",
+    "No realized post-fill price path is included; adverse selection, inventory risk, and capital cost are explicit estimates."
   ],
   "market_id": "synthetic-market-001",
-  "normalized_fixture_sha256": "f084a6a66a9e6c1759b766068972643ce752114da869bc4f17bfd38c8ebaa2b7",
+  "normalized_fixture_sha256": "df862c859286310ea41c54b82bdd45a44b48d0dea1f7fef099201ad6537b53b9",
   "profitability_claim_allowed": false,
   "rule": {
     "effective_from": "2026-08-05T00:00:00Z",

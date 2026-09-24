@@ -1,12 +1,18 @@
 from __future__ import annotations
 
 from pathlib import Path
+from decimal import Decimal as D
 import hashlib
 import json
 import tempfile
 import unittest
 
-from prediction_liquidity_kit.replay import ReplayError, ReplayManifest, build_replay
+from prediction_liquidity_kit.replay import (
+    ReplayError,
+    ReplayManifest,
+    build_replay,
+    run_economic_replay,
+)
 
 
 FIXTURE = (
@@ -73,6 +79,22 @@ class ReplayFixtureTest(unittest.TestCase):
         self.assertFalse(manifest["profitability_claim_allowed"])
         self.assertTrue(manifest["gaps"])
         self.assertTrue(manifest["survivorship_caveats"])
+
+
+    def test_synthetic_fixture_drives_reward_rule_and_mm_allocator(self) -> None:
+        result = run_economic_replay(FIXTURE, capital_budget=D("50"))
+        manifest = json.loads(FIXTURE.read_text(encoding="utf-8"))
+
+        self.assertEqual(result.replay_sha256, manifest["normalized_fixture_sha256"])
+        self.assertEqual(result.rule_output["rule_version"], "kalshi-volume-help-2026-08-05")
+        self.assertEqual(result.rule_output["theoretical_reward"], "5.00")
+        self.assertEqual(result.allocation.allocated_capital, D("50"))
+        self.assertEqual(result.allocation.unallocated_capital, D("0"))
+        self.assertEqual(len(result.allocation.allocations), 1)
+        allocation = result.allocation.allocations[0]
+        self.assertEqual(allocation.decomposition.theoretical_reward_rate, D("0.05"))
+        self.assertEqual(allocation.decomposition.net_expected_rate, D("0.041"))
+        self.assertEqual(allocation.values.net_expected_value, D("2.050"))
 
 
 if __name__ == "__main__":

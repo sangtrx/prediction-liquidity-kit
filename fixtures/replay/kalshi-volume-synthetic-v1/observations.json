@@ -3,12 +3,24 @@
     {
       "economics": {
         "adverse_selection_rate": {
-          "classification": "unknown",
-          "value": null
+          "classification": "estimated",
+          "value": "0.005"
+        },
+        "capital_basis": {
+          "classification": "synthetic",
+          "value": "100"
+        },
+        "capital_cost_rate": {
+          "classification": "estimated",
+          "value": "0.001"
         },
         "expected_fill_rate": {
           "classification": "estimated",
           "value": "0.50"
+        },
+        "expected_realized_reward_rate": {
+          "classification": "estimated",
+          "value": "0.04"
         },
         "expected_spread_capture_rate": {
           "classification": "estimated",
@@ -17,6 +29,18 @@
         "fees_rate": {
           "classification": "estimated",
           "value": "0.001"
+        },
+        "inventory_risk_rate": {
+          "classification": "estimated",
+          "value": "0.002"
+        },
+        "max_allocation": {
+          "classification": "synthetic",
+          "value": "100"
+        },
+        "risk_cap": {
+          "classification": "synthetic",
+          "value": "100"
         }
       },
       "quote": {
