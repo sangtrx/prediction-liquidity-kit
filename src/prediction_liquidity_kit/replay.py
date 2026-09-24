@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Mapping
 
 from .allocator import AllocationResult, MarketEconomics, allocate_capital
-from .rules import builtin_registry
+from .rules import RuleNotFound, builtin_registry
 
 
 class ReplayError(ValueError):
@@ -123,6 +123,21 @@ class ReplayManifest:
         rule_end = None if raw_rule_end is None else _utc(raw_rule_end, "rule.effective_to")  # type: ignore[arg-type]
         if rule_end is not None and rule_end <= rule_start:
             raise ReplayError("rule.effective_to must be after rule.effective_from")
+
+        venue = _require_text(value.get("venue"), "venue")
+        rule_version = _require_text(rule.get("version"), "rule.version")
+        try:
+            registered_rule = builtin_registry().get(rule_version)
+        except RuleNotFound as exc:
+            raise ReplayError("rule.version is not present in the canonical registry") from exc
+        if venue != registered_rule.venue:
+            raise ReplayError("manifest venue does not match canonical rule registry")
+        if (
+            rule_start != registered_rule.effective_from
+            or rule_end != registered_rule.effective_to
+        ):
+            raise ReplayError("manifest rule effective window does not match canonical rule registry")
+
         if start < rule_start or (rule_end is not None and end > rule_end):
             raise ReplayError("replay window is outside the bound rule-version effective window")
 
@@ -145,12 +160,12 @@ class ReplayManifest:
         return cls(
             schema_version=1,
             dataset_id=_require_text(value.get("dataset_id"), "dataset_id"),
-            venue=_require_text(value.get("venue"), "venue"),
+            venue=venue,
             market_id=_require_text(value.get("market_id"), "market_id"),
             source_revision=_require_text(value.get("source_revision"), "source_revision"),
             window_start=start,
             window_end=end,
-            rule_version=_require_text(rule.get("version"), "rule.version"),
+            rule_version=rule_version,
             rule_effective_from=rule_start,
             rule_effective_to=rule_end,
             files=files,
