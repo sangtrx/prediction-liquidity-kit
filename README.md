@@ -10,6 +10,21 @@ The project focuses on three questions:
 
 It is **not** a live market-making bot and does not place orders or spend sponsor funds.
 
+## Quickstart
+
+Python 3.11+ is supported. From a clean checkout:
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
+python -m pip install -e .
+prediction-liquidity-kit --version
+python examples/public_examples.py
+python -m unittest discover -s tests -v
+```
+
+The public example runs a versioned reward calculation, constrained MM capital allocation, sponsor-budget simulation, and deterministic replay hash. Its economics are synthetic/estimated and the output explicitly says so; it is not realized PnL or live-capital evidence.
+
 ## Principles
 
 - Reward formulas are versioned and date-effective.
@@ -30,23 +45,24 @@ The rule registry currently admits two materially different Kalshi public rule f
 Each admitted version records an effective interval, source URL, local source-summary snapshot and SHA-256. There is intentionally no mutable `latest` alias.
 
 ```bash
-PYTHONPATH=src python -m prediction_liquidity_kit.cli rules list
-PYTHONPATH=src python -m prediction_liquidity_kit.cli rules inspect kalshi-liquidity-help-2026-09-19
-PYTHONPATH=src python -m prediction_liquidity_kit.cli rules evaluate kalshi-volume-help-2026-08-05 \
+prediction-liquidity-kit rules list
+prediction-liquidity-kit rules inspect kalshi-liquidity-help-2026-09-19
+prediction-liquidity-kit rules evaluate kalshi-volume-help-2026-08-05 \
   --input-json '{"contract_price":"0.50","user_eligible_contracts":"1000","total_eligible_contracts":"1000","reward_pool":"1000"}'
 ```
 
 The pinned summaries under `docs/rule-snapshots/` are provenance fixtures, not substitutes for venue terms. Unsupported exceptions or unknown/missing inputs fail explicitly rather than being imputed.
 
-## Status
+## Historical evidence boundary
 
-Rule registry/calculator work is tracked in `sangtrx/sang-workspace#739`. MM allocator: `#740`. Sponsor optimizer/controller: `#741/#742`.
+The checked-in public Kalshi trade/candlestick fixture is observed market evidence, but it does not establish historical order-book depth, queue priority, account-specific fills, incentive enrollment/payout, fees, or exact post-fill adverse selection. The replay manifest keeps those gaps explicit and forbids a profitability claim.
 
 ## Verify
 
 ```bash
-PYTHONPATH=src python -m prediction_liquidity_kit.cli --version
-PYTHONPATH=src python -m unittest discover -s tests -v
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python -m prediction_liquidity_kit.cli --version
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python examples/public_examples.py
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python -m unittest discover -s tests -v
 git diff --check
 ```
 
@@ -57,7 +73,5 @@ git diff --check
 - [Contributing](CONTRIBUTING.md)
 - [Changelog and version policy](CHANGELOG.md)
 - [Security](SECURITY.md)
-
-Public examples and the first release are intentionally deferred until their owning implementation outcomes are integrated and independently verified.
 
 Apache-2.0 licensed.
