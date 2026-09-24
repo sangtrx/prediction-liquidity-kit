@@ -76,7 +76,15 @@ class ReplayFixtureTest(unittest.TestCase):
 
     def test_future_rule_version_cannot_leak_backward(self) -> None:
         payload = json.loads(FIXTURE.read_text(encoding="utf-8"))
-        payload["rule"]["effective_from"] = "2026-09-20T00:00:00Z"
+        payload["window"] = {
+            "start": "2026-09-18T23:58:00Z",
+            "end": "2026-09-18T23:59:00Z",
+        }
+        payload["rule"] = {
+            "version": "kalshi-liquidity-help-2026-09-19",
+            "effective_from": "2026-09-19T00:00:00Z",
+            "effective_to": "2027-01-01T00:00:00Z",
+        }
 
         with self.assertRaisesRegex(ReplayError, "outside the bound rule-version"):
             ReplayManifest.from_mapping(payload)
