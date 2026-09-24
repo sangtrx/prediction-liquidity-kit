@@ -1,0 +1,63 @@
+{
+  "observations": [
+    {
+      "economics": {
+        "adverse_selection_rate": {
+          "classification": "unknown",
+          "value": null
+        },
+        "expected_fill_rate": {
+          "classification": "estimated",
+          "value": "0.50"
+        },
+        "expected_spread_capture_rate": {
+          "classification": "estimated",
+          "value": "0.01"
+        },
+        "fees_rate": {
+          "classification": "estimated",
+          "value": "0.001"
+        }
+      },
+      "quote": {
+        "ask_price": {
+          "classification": "synthetic",
+          "value": "0.51"
+        },
+        "ask_size": {
+          "classification": "synthetic",
+          "value": "120"
+        },
+        "bid_price": {
+          "classification": "synthetic",
+          "value": "0.49"
+        },
+        "bid_size": {
+          "classification": "synthetic",
+          "value": "100"
+        }
+      },
+      "reward_inputs": {
+        "contract_price": {
+          "classification": "synthetic",
+          "value": "0.50"
+        },
+        "reward_pool": {
+          "classification": "synthetic",
+          "value": "100"
+        },
+        "total_eligible_contracts": {
+          "classification": "synthetic",
+          "value": "10000"
+        },
+        "user_eligible_contracts": {
+          "classification": "synthetic",
+          "value": "1000"
+        }
+      },
+      "timestamp": "2026-09-19T19:00:00Z"
+    }
+  ],
+  "retrieved_at": "2026-09-19T19:30:00Z",
+  "source_kind": "synthetic_calibration_fixture"
+}
