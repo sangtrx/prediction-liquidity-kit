@@ -81,6 +81,21 @@ class ReplayFixtureTest(unittest.TestCase):
         with self.assertRaisesRegex(ReplayError, "outside the bound rule-version"):
             ReplayManifest.from_mapping(payload)
 
+    def test_registered_future_rule_cannot_be_backdated_in_manifest(self) -> None:
+        payload = json.loads(FIXTURE.read_text(encoding="utf-8"))
+        payload["window"] = {
+            "start": "2026-06-01T00:00:00Z",
+            "end": "2026-06-01T00:01:00Z",
+        }
+        payload["rule"] = {
+            "version": "kalshi-liquidity-help-2026-09-19",
+            "effective_from": "2026-01-01T00:00:00Z",
+            "effective_to": "2027-01-01T00:00:00Z",
+        }
+
+        with self.assertRaisesRegex(ReplayError, "canonical rule registry"):
+            ReplayManifest.from_mapping(payload)
+
     def test_observation_timestamp_must_stay_within_manifest_window(self) -> None:
         root = FIXTURE.parent
         manifest = json.loads(FIXTURE.read_text(encoding="utf-8"))
