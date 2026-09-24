@@ -1,0 +1,31 @@
+{
+  "dataset_id": "kalshi-volume-synthetic-calibration-v1",
+  "files": [
+    {
+      "path": "observations.json",
+      "sha256": "f864765dc5d699f422596fdd7942225ad0f78e1165011e2cee8b838b5d9663f2"
+    }
+  ],
+  "gaps": [
+    "No venue fill tape is included; fill rate and realized reward rate are estimated.",
+    "No realized post-fill price path is included; adverse selection, inventory risk, and capital cost are explicit estimates."
+  ],
+  "market_id": "synthetic-market-001",
+  "normalized_fixture_sha256": "df862c859286310ea41c54b82bdd45a44b48d0dea1f7fef099201ad6537b53b9",
+  "profitability_claim_allowed": false,
+  "rule": {
+    "effective_from": "2026-08-05T00:00:00Z",
+    "effective_to": "2027-09-01T00:00:00Z",
+    "version": "kalshi-volume-help-2026-08-05"
+  },
+  "schema_version": 1,
+  "source_revision": "fixture:synthetic-calibration-v1",
+  "survivorship_caveats": [
+    "Synthetic market fixture is for deterministic replay mechanics only and is not historical calibration evidence."
+  ],
+  "venue": "kalshi",
+  "window": {
+    "end": "2026-09-19T19:01:00Z",
+    "start": "2026-09-19T19:00:00Z"
+  }
+}
