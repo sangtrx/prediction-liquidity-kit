@@ -61,7 +61,7 @@ class ReplayFixtureTest(unittest.TestCase):
             )
         )
         self.assertTrue(any("account ownership" in gap for gap in manifest["gaps"]))
-
+        candlesticks = json.loads(\n            (OBSERVED_FIXTURE.parent / "candlesticks.json").read_text(encoding="utf-8")\n        )\n        self.assertEqual(len(candlesticks["observations"]), 4)\n        self.assertTrue(\n            all(\n                record["candlestick"]["yes_bid"]["close_dollars"]["classification"] == "observed"\n                and record["candlestick"]["yes_ask"]["close_dollars"]["classification"] == "observed"\n                for record in candlesticks["observations"]\n            )\n        )\n        self.assertTrue(any("order-book depth" in gap for gap in manifest["gaps"]))\n
     def test_future_rule_version_cannot_leak_backward(self) -> None:
         payload = json.loads(FIXTURE.read_text(encoding="utf-8"))
         payload["rule"]["effective_from"] = "2026-09-20T00:00:00Z"
