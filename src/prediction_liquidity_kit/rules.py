@@ -106,7 +106,7 @@ def evaluate_kalshi_liquidity(inputs: Mapping[str, object]) -> dict[str, Decimal
     if isinstance(ticks_raw, bool) or not isinstance(ticks_raw, int) or ticks_raw < 0:
         raise RuleError("ticks_away is required and must be a non-negative integer")
 
-    user_period_score = _positive(inputs.get("user_period_score"), "user_period_score")
+    user_period_score = _positive(\n        inputs.get("user_period_score"), "user_period_score", allow_zero=True\n    )
     all_period_score = _positive(inputs.get("all_period_score"), "all_period_score")
     if user_period_score > all_period_score:
         raise RuleError("user_period_score cannot exceed all_period_score")
@@ -144,7 +144,7 @@ def evaluate_kalshi_volume(inputs: Mapping[str, object]) -> dict[str, Decimal]:
             "perpetual-futures exceptions are unsupported"
         )
 
-    user_contracts = _positive(inputs.get("user_eligible_contracts"), "user_eligible_contracts")
+    user_contracts = _positive(\n        inputs.get("user_eligible_contracts"), "user_eligible_contracts", allow_zero=True\n    )
     total_contracts = _positive(inputs.get("total_eligible_contracts"), "total_eligible_contracts")
     if user_contracts > total_contracts:
         raise RuleError("user_eligible_contracts cannot exceed total_eligible_contracts")
