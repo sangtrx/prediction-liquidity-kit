@@ -70,6 +70,39 @@ class RuleRegistryTest(unittest.TestCase):
         self.assertEqual(capped["per_contract_cap_reward"], "5.00")
         self.assertEqual(capped["theoretical_reward"], "5.00")
 
+    def test_zero_user_participation_yields_zero_reward(self) -> None:
+        liquidity = self.registry.evaluate(
+            "kalshi-liquidity-help-2026-09-19",
+            {
+                "target_size": "1000",
+                "discount_factor": "0.90",
+                "order_size": "100",
+                "ticks_away": 1,
+                "user_period_score": "0",
+                "all_period_score": "100",
+                "reward_pool": "100",
+                "non_excluded_snapshots": 8000,
+                "total_snapshots": 10000,
+            },
+        )
+        self.assertEqual(liquidity["period_share"], "0")
+        self.assertEqual(liquidity["theoretical_reward"], "0.00")
+        self.assertEqual(liquidity["payable_reward"], "0.00")
+
+        volume = self.registry.evaluate(
+            "kalshi-volume-help-2026-08-05",
+            {
+                "contract_price": "0.50",
+                "user_eligible_contracts": "0",
+                "total_eligible_contracts": "1000",
+                "reward_pool": "1000",
+            },
+        )
+        self.assertEqual(volume["volume_share"], "0")
+        self.assertEqual(volume["proportional_reward"], "0.00")
+        self.assertEqual(volume["per_contract_cap_reward"], "0.00")
+        self.assertEqual(volume["theoretical_reward"], "0.00")
+
     def test_registry_resolves_historical_versions_without_latest_alias(self) -> None:
         current = self.registry.get("kalshi-liquidity-help-2026-09-19")
         prior = replace(
