@@ -255,8 +255,36 @@ def _choose_market_decision(
         request.current_reward_per_period + request.max_rate_change_per_period,
     )
 
-    rows = sensitivity_table(request)
-    for row in rows:
+    rows = list(sensitivity_table(request))
+    calibrated_rewards = tuple(
+        point.reward_per_period for point in _sorted_points(request.calibration)
+    )
+    if allowed_min <= allowed_max:
+        for reward in (allowed_min, allowed_max):
+            if (
+                calibrated_rewards[0] <= reward <= calibrated_rewards[-1]
+                and all(row.reward_per_period != reward for row in rows)
+            ):
+                estimate = interpolate_response(request.calibration, reward)
+                bounds = uncertainty_bounds(
+                    estimate,
+                    request.calibration.uncertainty_fraction,
+                )
+                rows.append(
+                    SensitivityRow(
+                        reward_per_period=reward,
+                        estimate=estimate,
+                        bounds=bounds,
+                        conservative_target_met=conservative_target_met(
+                            bounds,
+                            request.target,
+                        ),
+                    )
+                )
+    rows.sort(key=lambda row: row.reward_per_period)
+    sensitivity = tuple(rows)
+
+    for row in sensitivity:
         if row.reward_per_period < allowed_min or row.reward_per_period > allowed_max:
             continue
         if row.conservative_target_met:
@@ -267,7 +295,7 @@ def _choose_market_decision(
                 expected_spend=row.reward_per_period * request.periods,
                 estimate=row.estimate,
                 bounds=row.bounds,
-                sensitivity=rows,
+                sensitivity=sensitivity,
                 evidence_kind=request.calibration.evidence_kind,
                 qualification=_qualification(request.calibration, exploratory),
             )
