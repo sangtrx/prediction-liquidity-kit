@@ -186,7 +186,7 @@ def controller_step(
         raise RuntimeError("requested action violates max_step_change")
 
     applied = requested
-    if _required_budget(applied, config.max_step_change) > remaining_before:
+    if applied > 0 and _required_budget(applied, config.max_step_change) >= remaining_before:
         safe = max(Decimal("0"), previous - config.max_step_change)
         if _required_budget(safe, config.max_step_change) > remaining_before:
             raise RuntimeError("budget-ramp invariant violated")
