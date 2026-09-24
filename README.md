@@ -47,6 +47,17 @@ Rule registry/calculator work is tracked in `sangtrx/sang-workspace#739`. MM all
 ```bash
 PYTHONPATH=src python -m prediction_liquidity_kit.cli --version
 PYTHONPATH=src python -m unittest discover -s tests -v
+git diff --check
 ```
+
+## Project docs
+
+- [Architecture](docs/ARCHITECTURE.md)
+- [Economic boundaries](docs/ECONOMIC-BOUNDARIES.md)
+- [Contributing](CONTRIBUTING.md)
+- [Changelog and version policy](CHANGELOG.md)
+- [Security](SECURITY.md)
+
+Public examples and the first release are intentionally deferred until their owning implementation outcomes are integrated and independently verified.
 
 Apache-2.0 licensed.
