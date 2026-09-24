@@ -10,10 +10,13 @@ A public release must identify the exact Git commit it was built from. Source-se
 
 Venue reward rules have their own version identity and effective dates. Package version changes never replace or erase historical rule versions.
 
-## [Unreleased]
+## [0.1.0] - 2026-09-24
 
-- Contributor workflow and economic-boundary documentation.
-- Public examples and first release remain pending the implementation and integration of the corresponding rule, allocation, sponsor, controller, and replay outcomes.
+- Versioned Kalshi liquidity- and volume-incentive rule registry with deterministic decimal calculators and source provenance.
+- Risk-aware MM capital allocation, sponsor budget/elasticity optimization, and bounded closed-loop controller simulation.
+- Deterministic replay manifests with canonical rule-window binding, synthetic end-to-end economics replay, and pinned observed public Kalshi trade/candlestick evidence.
+- Public clean-checkout examples for reward rules, capital allocation, sponsor simulation, and replay hashing.
+- Explicit evidence gaps and simulation-only/non-live-capital boundaries remain enforced.
 
 ## [0.0.1] - 2026-09-19
 
