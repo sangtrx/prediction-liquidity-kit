@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "prediction-liquidity-kit"
-version = "0.0.1"
-description = "Deterministic reward and liquidity-incentive tooling for prediction markets"
+version = "0.1.0"
+description = "Deterministic reward, replay, and liquidity-allocation tooling for prediction markets"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "Apache-2.0"}
 authors = [{name = "Sang"}]
-keywords = ["prediction-markets", "market-making", "liquidity", "rewards", "incentives"]
+keywords = ["prediction-markets", "market-making", "liquidity", "rewards", "incentives", "replay", "simulation"]
 
 [project.scripts]
 prediction-liquidity-kit = "prediction_liquidity_kit.cli:main"
